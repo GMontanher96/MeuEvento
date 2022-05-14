@@ -1,12 +1,10 @@
 // Update with your config settings.
 // conexão com o banco
+const { db } = require('./.env')
+
 module.exports = {
     client: 'postgresql',
-    connection: {
-      database: 'events',
-      user:     'postgres',
-      password: '1996'
-    },
+    connection: db,
     pool: {
       min: 2,
       max: 10

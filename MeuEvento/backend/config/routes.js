@@ -1,29 +1,37 @@
+const admin = require('./admin')
+
+//  .post(admin(app.api.user.save))
+//   .get(admin(app.api.user.get))
+
+
 module.exports = app => {
-    // API DO TOKEN
     app.post('/signup', app.api.user.save)
     app.post('/signin', app.api.auth.signin)
     app.post('/validateToken', app.api.auth.validateToken)
-    // URL PUBLICAS
-
-
-    // API DE USUÁRIOS
 
     app.route('/users')
+        .all(app.config.passport.authenticate())
         .post(app.api.user.save) // acessa os arquivos da api
         .get(app.api.user.get)
 
         app.route('/users/:id')
+            .all(app.config.passport.authenticate())
             .put(app.api.user.save)
             .get(app.api.user.getUserById)
+            .delete(admin(app.api.user.remove))
 
             // API DOS EVENTOS
 
             app.route('/events')
+            .all(app.config.passport.authenticate())
             .post(app.api.event.save) 
             .get(app.api.event.get)
     
             app.route('/events/:id')
+            .all(app.config.passport.authenticate())
                 .put(app.api.event.save)
                 .get(app.api.event.getEventById)
+                .delete(admin(app.api.user.remove))
+
 
 }

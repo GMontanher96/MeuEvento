@@ -1,59 +1,52 @@
-const { authSecret } = require('../.env')
-const  jwt = require('jwt-simple')
-const bcrypt = require('bcrypt-nodejs') // compara a senha do login e do banco
+const { authSecret } = require("../.env");
+const jwt = require("jwt-simple");
+const bcrypt = require("bcrypt-nodejs");
 
-
-module.exports = app => {
-    const signin = async  (req, res) => {
-        if(!req.body.email || !req.body.password) {
-            return res.status(400).send('Informe o usuário e a senha!')
-        }
-
-        const user = await app.db('users')
-            .where({email: req.body.email })
-            .first()
-        // se o usuario não existe retorne
-
-        if(!user) return res.status(400).send('Usuário não encontrado!!!!')
-
-        const isMatch = bcrypt.compareSync(req.body.password, user.password) // valida se a senha e a mesma 
-        if(!isMatch) return res.status(401).send('Email/Senha inválidos!!') // não autorizado
-
-        // se o processo der certo. (gerar o token)
-
-        const now = Math.floor(Date.now() / 1000)
-
-        const payload = {
-            id: user.id,
-            nome: user.nome,
-            email: user.email,
-            admin: user.admin,
-            iat: now, // data de geração do token
-            exp: now + (60 * 60 * 24 * 2) // vai expirar em 2 dias o token
-        }
-
-        res.json({
-            ...payload, // enviando o payload 
-            token: jwt.encode(payload, authSecret) // requisição do token
-        })
+module.exports = (app) => {
+  const signin = async (req, res) => {
+    if (!req.body.email || !req.body.password) {
+      return res.status(400).send("Informe usuário e senha!");
     }
 
-    const validateToken = async (req, res) => {
-        const userData = req.body || null
-        try {
-            if(userData) {
-                const token = jwt.decode(userData.token, authSecret) // armazena o token
-                if(new Date(token.exp * 1000) > new Date()) {
-                    return res.send(true) // token valido
-                }
-            }
-        } catch(e) {
-            // problema com o token
+    const user = await app.db("users").where({ email: req.body.email }).first();
 
+    if (!user) return res.status(400).send("Usuário não encontrado!");
+
+    const isMatch = bcrypt.compareSync(req.body.password, user.password);
+    if (!isMatch) return res.status(401).send("Email/Senha inválidos!");
+
+    const now = Math.floor(Date.now() / 1000);
+
+    const payload = {
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
+      admin: user.admin,
+      iat: now,
+      exp: now + 60 * 60 * 24 * 3,
+    };
+
+    res.json({
+      ...payload,
+      token: jwt.encode(payload, authSecret),
+    });
+  };
+
+  const validateToken = async (req, res) => {
+    const userData = req.body || null;
+    try {
+      if (userData) {
+        const token = jwt.decode(userData.token, authSecret);
+        if (new Date(token.exp * 1000) > new Date()) {
+          return res.send(true);
         }
-
-        res.send(false)
+      }
+    } catch (e) {
+      // problema com o token
     }
 
-    return { signin, validateToken }
-}
+    res.send(false);
+  };
+
+  return { signin, validateToken };
+};
