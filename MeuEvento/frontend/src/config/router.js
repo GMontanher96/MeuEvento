@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import Home from '../pages/home/index.vue'
 import AdminPages from '../pages/admin/index.vue'
+import Login from '../pages/login/index.vue'
 
 Vue.use(VueRouter)
 
@@ -15,7 +16,13 @@ const routes = [{
      name: 'adminPages',
      path: '/admin',
      component: AdminPages
- }]
+ },
+ {
+    name: 'login',
+    path: '/login',
+    component: Login
+},
+]
 
 const router = new VueRouter({
     mode: 'history',
