@@ -1,8 +1,11 @@
 <template>
 	<div id="app" :class="{'hide-menu': !isMenuVisible}">
-		<Header title="Meu Evento: #EuFui" :hideToggle="!user" :hideUserDropDown="!user" />
+		<Header title="Meu Evento: #EuFui" 
+		:hideToggle="!user" 
+		:hideUserDropDown="!user" />
 		<Menu v-if="user"/>
-		<Content />
+		<Loading v-if="validatingToken" />
+		<Content v-else/>
 		<Footer />
 	</div>
 </template>
@@ -15,11 +18,13 @@ import Header from "./components/template/Header.vue"
 import Menu from "./components/template/Menu.vue"
 import Content from "./components/template/Content.vue"
 import Footer from "./components/template/Footer.vue"
+import Loading from "./components/template/Loading.vue"
+
 
 
 export default {
 	name: "App",
-	components: { Header, Menu, Content, Footer},
+	components: { Header, Menu, Content, Footer, Loading},
 	computed: mapState(['isMenuVisible', 'user']),
 	data: function() {
 		return {
@@ -28,14 +33,14 @@ export default {
 	},
 	methods: {
 		async validateToken() {
-			this.validateToken = true 
+			this.validatingToken = true 
 
 			const json = localStorage.getItem(userKey)
 			const userData = JSON.parse(json)
 			this.$store.commit('setUser', null)
 
 			if(!userData) {
-				this.validateToken = false 
+				this.validatingToken = false 
 				return this.$router.push({ name: 'login' })
 			}
 
@@ -48,10 +53,10 @@ export default {
 				this.$router.push({ name: 'login' })
 			}
 			
-			this.validateToken = false
+			this.validatingToken = false
 		}
 	},
-	created() {
+	mounted() {
 		this.validateToken()
 	}
 }
