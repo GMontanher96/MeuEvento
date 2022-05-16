@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 import Home from '../pages/home/index.vue'
 import AdminPages from '../pages/admin/index.vue'
 import Login from '../pages/login/index.vue'
+import About from '../pages/about/index.vue'
+import Event from '../components/searchEvent/SearchEvent.vue'
 
 import { userKey } from '@/global'
 
@@ -25,6 +27,16 @@ const routes = [{
     name: 'login',
     path: '/login',
     component: Login
+},
+{
+    name: 'about',
+    path: '/about',
+    component: About
+},
+{
+    name: 'Event',
+    path: '/event',
+    component: Event
 },
 
 ]

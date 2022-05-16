@@ -16,76 +16,58 @@
           
           <br>
             <b-form v-show="exibirForm">
-         <input id="event-id" type="hidden" v-model="event.id" />
+            
+        <div v-if="confirmPaymant"> <h3>Confirmação de Pagamento</h3> </div>
          <b-row>
-             <b-col md="6" sm="12">
-                    <b-form-group label="Nome do Evento:" label-for="event-nome">
-                        <b-form-input id="event-nome" type="text" v-model="event.nome" required disabled   />
-                    </b-form-group>
-             </b-col>
-                 <b-col md="6" sm="12">
-                    <b-form-group label="Descrição:" label-for="event-descricao">
-                        <b-form-input id="event-descricao" type="text" v-model="event.descricao" required disabled  />
+              <b-col md="6" sm="12">
+                    <b-form-group label="Forma de Pagamento:" label-for="event-forma-pagamento">
+                          <b-form-select v-model="selected" :options="options"></b-form-select>
                     </b-form-group>
              </b-col>
          </b-row>
-           <b-row>
+           <b-row v-if="selected === 'b' ">
+               <b-col md="6" sm="12">
+                    <b-form-group label="Número do Cartão:" label-for="payment-numero">
+                        <b-form-input id="payment-numero" type="number"  required    />
+                    </b-form-group>
+             </b-col>
                  <b-col md="6" sm="12">
-                    <b-form-group label="Empresa:" label-for="event-empresa">
-                        <b-form-input id="event-empresa" type="text" v-model="event.empresa" required  disabled/>
+                    <b-form-group label="Nome do Titular:" label-for="payment-nome">
+                        <b-form-input id="payment-nome" type="text" required   />
                     </b-form-group>
              </b-col>
-                <b-col md="6" sm="12">
-                    <b-form-group label="Responsável:" label-for="event-responsavel">
-                        <b-form-input id="event-responsavel" type="text" v-model="event.responsavel" required disabled />
+               <b-col md="6" sm="12">
+                    <b-form-group label="Validade:" label-for="payment-validade">
+                        <b-form-input id="payment-validade" type="text"  required    />
                     </b-form-group>
              </b-col>
-           
-               
-         </b-row>
-              <b-row>
                  <b-col md="6" sm="12">
-                    <b-form-group label="Data:" label-for="event-data">
-                        <b-form-input id="event-data" type="date" v-model="event.data" required   disabled/>
+                    <b-form-group label="CV:" label-for="payment-cv">
+                        <b-form-input id="payment-cv" type="number" required   />
                     </b-form-group>
              </b-col>
-             <b-col md="6" sm="12">
-                    <b-form-group label="Hora:" label-for="event-horario">
-                        <b-form-input id="event-horario" type="time" v-model="event.horario" disabled  />
-                    </b-form-group>
-             </b-col>
-               
-         </b-row>
-                 <b-row>
                  <b-col md="6" sm="12">
-                    <b-form-group label="Cidade:" label-for="event-cidade">
-                        <b-form-input id="event-cidade" type="text" v-model="event.cidade" required  disabled />
+                    <b-form-group label="Parcelas:" label-for="payment-parcelas">
+                          <b-form-select v-model="selectedParc" :options="optionsParc"></b-form-select>
                     </b-form-group>
              </b-col>
-             <b-col md="6" sm="12">
-                    <b-form-group label="Estado:" label-for="event-estado">
-                        <b-form-input id="event-estado" type="text" v-model="event.estado" required   disabled/>
-                    </b-form-group>
-             </b-col>
-               
-         </b-row>
-                 <b-row>
-                 <b-col md="6" sm="12">
-                    <b-form-group label="Local:" label-for="event-local">
-                        <b-form-input id="event-local" type="text" v-model="event.local" required disabled  />
-                    </b-form-group>
-             </b-col>
+        
+              
+      
              <b-col md="6" sm="12">
                     <b-form-group label="Valor:" label-for="event-valor">
                         <b-form-input id="event-valor" type="text" v-model="event.valor" required disabled />
                     </b-form-group>
              </b-col>
-                 <b-col md="6" sm="12">
-                    <b-form-group label="Forma de Pagamento:" label-for="event-forma-pagamento">
-                          <b-form-select v-model="selected" :options="options"></b-form-select>
+              
+         </b-row>
+         <b-row v-else-if="selected === 'a'">
+              <b-col md="6" sm="12">
+                    <b-form-group label="Valor:" label-for="event-valor">
+                        <b-form-input id="event-valor" type="text" v-model="event.valor" required disabled />
                     </b-form-group>
              </b-col>
-        
+              
          </b-row>
               <b-row>
                <b-col xs="12" style="padding: 30px">
@@ -123,6 +105,9 @@ export default {
     return {
       exibirForm: false,
       exibirList: false,
+      exibirPaymentCartao: false,
+      exibirPaymentBoleto: false,
+      confirmPaymant: false,
       mode: "save",
       event: {},
       events: [],
@@ -145,9 +130,18 @@ export default {
       selected: null,
       options: [
         { value: null, text: "Selecione a forma de pagamento" },
-        { value: "a", text: "PIX" },
-        { value: "b", text: "CARTÃO DE CREDITO" },
-        { value: "b", text: "CARTÃO DE DEBITO" },    
+        { value: "a", text: "BOLETO" },
+        { value: "b", text: "CARTÃO" },
+      ],
+      selectedParc: null,
+      optionsParc: [
+        { value: null, text: "Selecione as parcelas" },
+        { value: 1, text: "1x" },
+        { value: 2, text: "2x" },
+        { value: 3, text: "3x" },
+        { value: 4, text: "4x" },
+        { value: 5, text: "5x" },
+        { value: 6, text: "6x" },
       ],
     };
   },
@@ -157,12 +151,15 @@ export default {
       axios.get(url).then((res) => {
         this.events = res.data;
       });
-      this.exibirList = true
+      this.exibirList = true;
     },
     reset() {
       this.mode = "save";
       this.event = {};
       this.loadEvents();
+      this.exibirForm = false;
+      this.exibirList = false;
+      this.confirmPaymant = false;
     },
     buy() {
       const method = this.event.id ? "put" : "post";
@@ -178,6 +175,7 @@ export default {
       this.mode = mode;
       this.event = { ...event };
       this.exibirForm = true;
+      this.confirmPaymant = true;
     },
   },
 
