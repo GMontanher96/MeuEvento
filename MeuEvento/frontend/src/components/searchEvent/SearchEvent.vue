@@ -1,5 +1,12 @@
 <template>
   <b-container fluid>
+     <div>
+  <b-modal v-model="modalShow" title="MEU EVENTO" ok-only v-b-modal.modal-center >
+  <b> <p class="my-4">COMPRA EFETUADA COM SUCESSO! </p> </b>   
+    <hr>
+        <p class="my-4">CASO TENHA FEITO A COMPRA POR BOLETO, FAVOR AGUARDAR 02 DIAS ÚTEIS.</p>    
+  </b-modal>
+</div>
           <PageTitle icon=" fa fa-search" main="Buscar eventos"  sub="Encontre seus eventos preferidos!"/>
     <b-input-group size="large">
             <b-form-input
@@ -56,7 +63,7 @@
       
              <b-col md="6" sm="12">
                     <b-form-group label="Valor:" label-for="event-valor">
-                        <b-form-input id="event-valor" type="text" v-model="event.valor" required disabled />
+                        <b-form-input id="event-valor" type="number" v-model="event.valor" required disabled />
                     </b-form-group>
              </b-col>
               
@@ -71,7 +78,7 @@
          </b-row>
               <b-row>
                <b-col xs="12" style="padding: 30px">
-                  <b-button variant="success" v-if="mode === 'save'" @click="buy">Comprar</b-button>
+                  <b-button variant="success" v-if="selected" @click="modalShow = !modalShow">Comprar</b-button>
                   <b-button class="ml-3" @click="reset">Cancelar</b-button>
                </b-col>
          </b-row>
@@ -95,14 +102,16 @@
 
 <script>
 import PageTitle from "@/components/pageTitle/PageTitle";
-import { baseApiUrl, showError } from "@/global";
+import { baseApiUrl } from "@/global";
 import axios from "axios";
+import moment from "moment";
 
 export default {
   name: "Home",
   components: { PageTitle },
   data() {
     return {
+      modalShow: false,
       exibirForm: false,
       exibirList: false,
       exibirPaymentCartao: false,
@@ -119,12 +128,24 @@ export default {
           key: "data",
           label: "Data",
           sortable: true,
-          formatter: (value) => (value ? "DD/MM/YYYY" : "DD/MM/YYYY"),
+          formatter: (value) => {
+            return moment(value).format("DD/MM/YYYY");
+          },
         },
         { key: "horario", label: "Hora", sortable: true },
         { key: "cidade", label: "Cidade", sortable: true },
         { key: "local", label: "Local", sortable: true },
-        { key: "valor", label: "Valor", sortable: true },
+        {
+          key: "valor",
+          label: "Valor",
+          sortable: true,
+          formatter: (value) => {
+            return value.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+          },
+        },
         { key: "actions", label: "Comprar" },
       ],
       selected: null,
@@ -162,14 +183,7 @@ export default {
       this.confirmPaymant = false;
     },
     buy() {
-      const method = this.event.id ? "put" : "post";
-      const id = this.event.id ? `/${this.event.id}` : "";
-      axios[method](`${baseApiUrl}/events${id}`, this.event)
-        .then(() => {
-          this.$toasted.global.defaultSuccess();
-          this.reset();
-        })
-        .catch(showError);
+      <ConfirmPayment />;
     },
     loadEvent(event, mode = "save") {
       this.mode = mode;

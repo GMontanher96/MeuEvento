@@ -17,7 +17,7 @@ module.exports = app => {
         app.route('/users/:id')
             .all(app.config.passport.authenticate())
             .put(admin(app.api.user.save))
-            .get(admin(app.api.user.getUserById))
+            .get((app.api.user.getUserById))
             .delete(admin(app.api.user.remove))
 
             // API DOS EVENTOS
@@ -25,7 +25,7 @@ module.exports = app => {
             app.route('/events')
             .all(app.config.passport.authenticate())
             .post(admin(app.api.event.save)) 
-            .get(admin(app.api.event.get))
+            .get(app.api.event.get)
     
             app.route('/events/:id')
             .all(app.config.passport.authenticate())

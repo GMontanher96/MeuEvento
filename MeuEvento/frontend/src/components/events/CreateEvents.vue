@@ -61,7 +61,7 @@
              </b-col>
              <b-col md="6" sm="12">
                     <b-form-group label="Valor:" label-for="event-valor">
-                        <b-form-input id="event-valor" type="text" v-model="event.valor" required placeholder="Informe o valor do evento" />
+                        <b-form-input id="event-valor" type="number" v-model="event.valor" required placeholder="Informe o valor do evento" />
                     </b-form-group>
              </b-col>
         
@@ -97,7 +97,7 @@
 <script>
 import { baseApiUrl, showError } from "@/global";
 import axios from "axios";
-// import moment from 'moment';
+import moment from 'moment';
 
 export default {
   name: "EventsAdmin",
@@ -115,15 +115,25 @@ export default {
           key: "data",
           label: "Data",
           sortable: true,
-          formatter: (value) => (value ? "DD/MM/YYYY" : "DD/MM/YYYY"),
+          formatter: (value) => {
+              return  moment(value).format('DD/MM/YYYY')
+
+            }
         },
         { key: "horario", label: "Hora", sortable: true },
         { key: "cidade", label: "Cidade", sortable: true },
         { key: "estado", label: "Estado", sortable: true },
-        { key: "valor", label: "Valor", sortable: true },
+        { key: "valor", label: "Valor", sortable: true, formatter: (value) => {
+            return  value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          }, },
         { key: "actions", label: "Ações" },
       ],
     };
+  },
+  computed: {
+    formattedDate() {
+      return moment(this.date).format('YYYY-MM-DD')
+    }
   },
   methods: {
     loadEvents() {
