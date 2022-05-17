@@ -74,7 +74,6 @@
              </b-col>
                <b-col xs="12" style="padding: 30px">
                   <b-button variant="primary" v-if="mode === 'save'" @click="save">Salvar</b-button>
-                  <b-button variant="danger" v-if="mode === 'remove'" @click="remove">Excluir</b-button>
                   <b-button class="ml-3" @click="reset">Cancelar</b-button>
                </b-col>
          </b-row>
@@ -157,15 +156,6 @@ export default {
             })
             .catch(showError)
 
-    },
-    remove() {
-        const id = this.event.id
-        axios.delete(`${baseApiUrl}/events/${id}`)
-            .then(() => {
-                this.$toasted.global.defaultSuccess()
-                this.reset()
-            })
-            .catch(showError)
     },
     loadEvent(event, mode = 'save') {
         this.mode = mode

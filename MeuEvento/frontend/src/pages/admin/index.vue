@@ -7,6 +7,9 @@
             <b-tab title="Eventos" active>
               <CreateEvents />
             </b-tab>
+             <b-tab title="Usuários" >
+              <CreateUsers />
+            </b-tab>
           </b-tabs>
         </b-card>
       </div>
@@ -16,9 +19,10 @@
 <script>
 import PageTitle from "@/components/pageTitle/PageTitle";
 import CreateEvents from "@/components/events/CreateEvents"
+import CreateUsers from "@/components/users/CreateUsers.vue";
 export default {
   name: "AdminPages",
-  components: { PageTitle, CreateEvents },
+  components: { PageTitle, CreateEvents, CreateUsers },
 };
 </script>
 

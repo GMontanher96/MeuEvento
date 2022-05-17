@@ -21,7 +21,6 @@ const routes = [{
      name: 'adminPages',
      path: '/admin',
      component: AdminPages,
-     meta: { requiresLogin: true} 
  },
  {
     name: 'login',
